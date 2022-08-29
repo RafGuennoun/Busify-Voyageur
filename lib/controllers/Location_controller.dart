@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/Location_model.dart';
 
 
-class LocationRepository {
+class LocationController {
 
   final String api = Constants().getAPI();
   
