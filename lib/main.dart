@@ -1,3 +1,4 @@
+import 'package:busify_voyageur/views/welcome_views/SplashScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
           )
         )
       ),
-      home: Container(),
+      home: const SplashScreen(),
     );
   }
 }
