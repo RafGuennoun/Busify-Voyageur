@@ -224,7 +224,8 @@ class _MainViewState extends State<MainView> {
                           ),
                           
                           CupertinoSwitch(
-                            value: false, 
+                            value: darkmode, 
+                            activeColor: Colors.amber,
                             onChanged: (value){
                               print(value);
                               if (value == true) {
