@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:busify_voyageur/views/Favoris_view.dart';
 import 'package:busify_voyageur/views/Historique.dart';
 import 'package:busify_voyageur/views/Home_view.dart';
@@ -23,6 +24,24 @@ class _MainViewState extends State<MainView> {
   //   HomeView(prefs: prefs,),
   //   const FavorisView(),
   // ];
+
+  bool darkmode = false;
+  dynamic savedThemeMode;
+
+  Future getCurrentTheme() async {
+    savedThemeMode = await AdaptiveTheme.getThemeMode();
+    if (savedThemeMode.toString() == 'AdaptiveThemeMode.dark') {
+      print('mode sombre');
+      setState(() {
+        darkmode = true;
+      });
+    } else {
+      setState(() {
+        darkmode = false;
+      });
+      print('mode clair');
+    }
+  }
 
   int index = 0;
   @override
@@ -206,7 +225,17 @@ class _MainViewState extends State<MainView> {
                           
                           CupertinoSwitch(
                             value: false, 
-                            onChanged: (val){}
+                            onChanged: (value){
+                              print(value);
+                              if (value == true) {
+                                AdaptiveTheme.of(context).setDark();
+                              } else {
+                                AdaptiveTheme.of(context).setLight();
+                              }
+                              setState(() {
+                                darkmode = value;
+                              });
+                            }
                           ),
                         ],
                       ) 
