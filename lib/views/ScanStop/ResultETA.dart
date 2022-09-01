@@ -1,8 +1,8 @@
 import 'package:busify_voyageur/controllers/Location_controller.dart';
 import 'package:busify_voyageur/models/Location_model.dart';
 import 'package:busify_voyageur/models/Node_model.dart';
-import 'package:busify_voyageur/views/Main_view.dart';
-import 'package:busify_voyageur/views/ScanStop/SetupNotif.dart';
+import 'package:busify_voyageur/views/ScanStop/CounterPage.dart';
+import 'package:busify_voyageur/widgets/Loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -18,7 +18,7 @@ class ResultETA extends StatefulWidget {
 class _ResultETAState extends State<ResultETA> {
 
   Future<LocationModel>? busLoc;
-  LocationController locRepo = LocationController();
+  LocationController locController = LocationController();
 
   MapController? controller ;
 
@@ -30,7 +30,7 @@ class _ResultETAState extends State<ResultETA> {
   @override
   void initState() {
     super.initState();
-    busLoc = locRepo.getLocation(widget.data['bus']);
+    busLoc = locController.getLocation(widget.data['bus']);
     controller = MapController(
       initMapWithUserPosition: false,
       initPosition: GeoPoint(
@@ -86,77 +86,44 @@ class _ResultETAState extends State<ResultETA> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Temps d'arrivé"),
-        leading:  IconButton(
-          icon: const Icon(CupertinoIcons.bell_solid),
-          onPressed: (){
-            if (dureeBusDepart.isEmpty) {
-              showCupertinoDialog(
-                context: context,
-                builder: (context) {
-                  return CupertinoAlertDialog(
-                    title: const Text("Oups !"),
-                    content: const Text("Cliquez d'abord sur BUS pour voir le temps d'arrivée."),
-                    actions: [
-
-                      CupertinoDialogAction(
-                        child: Text(
-                          "Retour",
-                          style: TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                        onPressed: (){ 
-                          Navigator.pop(context);
-                        }
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else if(int.parse(dureeBusDepart) > 2){
-              
-              Navigator.push(
-              context, 
-              MaterialPageRoute(builder: (context) => SetupNotif(
-                min: int.parse(dureeBusDepart),
-              ))
-            );
-            }else{
-              showCupertinoDialog(
-                context: context,
-                builder: (context) {
-                  return CupertinoAlertDialog(
-                    title: const Text("Oups !"),
-                    content: const Text("Votre bus arrive dans moins de deux minutes."),
-                    actions: [
-
-                      CupertinoDialogAction(
-                        child: Text(
-                          "Retour",
-                          style: TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                        onPressed: (){ 
-                          Navigator.pop(context);
-                        }
-                      ),
-                    ],
-                  );
-                },
-              );
-
-            }
-      
-          }, 
-        ),
         centerTitle: true,
         actions: [
 
           IconButton(
-            icon: const Icon(Icons.dashboard_sharp),
+            icon: const Icon(CupertinoIcons.chevron_right_2),
             onPressed: (){
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const MainView()),
-                (Route<dynamic> route) => false,
+              if (dureeBusDepart.isEmpty) {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoAlertDialog(
+                      title: const Text("Oups !"),
+                      content: const Text("Cliquez d'abord sur BUS pour voir le temps d'arrivée."),
+                      actions: [
+
+                        CupertinoDialogAction(
+                          child: Text(
+                            "Retour",
+                            style: TextStyle(color: Theme.of(context).primaryColor),
+                          ),
+                          onPressed: (){ 
+                            Navigator.pop(context);
+                          }
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                
+                Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => CounterPage(
+                  min: int.parse(dureeBusDepart),
+                ))
               );
+            }
+            
             }, 
           ),
 
@@ -173,11 +140,21 @@ class _ResultETAState extends State<ResultETA> {
             print(snapshot.connectionState);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator()
+                child: Loading()
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) {
-                return const Text('Error');
+                return Center(
+                  child: Column(
+                    children: [
+                      const Text('Error'),
+
+                      const SizedBox(height: 5,),
+
+                      Text(snapshot.error.toString())
+                    ],
+                  )
+                );
               } else if (snapshot.hasData) {
 
                 // ! C'est ici que ca se passe
@@ -332,7 +309,7 @@ class _ResultETAState extends State<ResultETA> {
                                   color: Theme.of(context).primaryColor,
                                   child: ListTile(
                                     title: Text(
-                                      "Arrivé",
+                                      "Voyage",
                                       style: TextStyle(
                                         color: Theme.of(context).brightness == Brightness.light 
                                         ?Colors.white

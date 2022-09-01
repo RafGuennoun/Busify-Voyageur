@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MainView()));
+        MaterialPageRoute(builder: (context) => MainView(prefs: prefs,)));
     }
   }
 

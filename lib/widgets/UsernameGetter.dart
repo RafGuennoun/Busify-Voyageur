@@ -104,7 +104,7 @@ class _UsernameGetterState extends State<UsernameGetter> {
 
                 Navigator.pushAndRemoveUntil(
                   context, 
-                  MaterialPageRoute(builder: (context) => const MainView()), 
+                  MaterialPageRoute(builder: (context) => MainView(prefs: prefs,)), 
                   (route) => false
                 );
               }

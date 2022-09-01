@@ -1,10 +1,12 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  SharedPreferences prefs;
+  HomeView({required this.prefs});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -22,22 +24,23 @@ class _HomeViewState extends State<HomeView> {
   final bool _isListenLocation = false;
   final bool _isGetLocation = false;
 
-  SharedPreferences? prefs;
+  // SharedPreferences? prefs;
 
-  Future initPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-  }
+  // Future initPrefs() async {
+  //   prefs = await SharedPreferences.getInstance();
+  // }
 
-  @override
-  void initState() {
-    initPrefs();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   initPrefs();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
 
     double width = MediaQuery.of(context).size.width;
+
 
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.light ? const Color(0xfff5f5f5) :null,
@@ -84,7 +87,10 @@ class _HomeViewState extends State<HomeView> {
                               color: Theme.of(context).primaryColor,
                             ),
                             title: Text(
-                              "5 scans",
+                              "25 scans",
+                              // widget.prefs.getInt('nbScans') == null ?
+                              // "0 scans" :
+                              // "${widget.prefs.getInt('nbScans')} scans",
                               style: Theme.of(context).textTheme.titleMedium 
                             ),
                             subtitle: Text(
@@ -103,7 +109,10 @@ class _HomeViewState extends State<HomeView> {
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 5),
                                 child: LiquidLinearProgressIndicator(
-                                  value: 0.75, 
+                                  // value: widget.prefs.getInt('nbScans') == null 
+                                  // ? 0 
+                                  // : (widget.prefs.getInt('nbScans') as int )/100, 
+                                  value: 0.25, 
                                   valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor), 
                                   backgroundColor: Theme.of(context).brightness == Brightness.light 
                                   ? Colors.white
@@ -178,7 +187,7 @@ class _HomeViewState extends State<HomeView> {
                           color: Theme.of(context).primaryColor,
                         ),
                         title: Text(
-                          "Bab Ezzouar",
+                          "Fréres el selami",
                           style: Theme.of(context).textTheme.bodyMedium ,
                         ),
                       ),
@@ -189,7 +198,7 @@ class _HomeViewState extends State<HomeView> {
                           color: Theme.of(context).primaryColor,
                         ),
                         title: Text(
-                          "Alger centre",
+                          "Jardin d'essai",
                           style: Theme.of(context).textTheme.bodyMedium ,
                         ),
                       ),
@@ -243,7 +252,7 @@ class _HomeViewState extends State<HomeView> {
                           color: Theme.of(context).primaryColor,
                         ),
                         title: Text(
-                          "01809 122 15",
+                          "2022",
                           style: Theme.of(context).textTheme.bodyMedium ,
                         ),
                       ),

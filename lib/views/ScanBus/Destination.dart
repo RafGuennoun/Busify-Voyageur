@@ -1,22 +1,27 @@
-import 'dart:convert';
 
 import 'package:busify_voyageur/models/Node_model.dart';
 import 'package:busify_voyageur/views/Maps/StopLocation.dart';
-import 'package:busify_voyageur/views/ScanStop/ResultETA.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ChooseDest extends StatefulWidget {
+class Destination extends StatefulWidget {
   final Map<String, dynamic> data;
-  const ChooseDest({required this.data});
+  const Destination({required this.data});
 
   @override
-  State<ChooseDest> createState() => _ChooseDestState();
+  State<Destination> createState() => _DestinationState();
 }
 
-class _ChooseDestState extends State<ChooseDest> {
+class _DestinationState extends State<Destination> {
+
+  Location location = Location();
+  bool? _serviceEnabled;
+  PermissionStatus? _permissionGranted;
+  LocationData? _locationData;
+  final bool _isListenLocation = false;
+  bool _isGetLocation = false;
 
   SharedPreferences? prefs;
 
@@ -109,8 +114,8 @@ class _ChooseDestState extends State<ChooseDest> {
         
                   CupertinoButton(
                     color: Theme.of(context).primaryColor,
-                    child: const Text("Trouver un bus"),
-                    onPressed: (){
+                    child: const Text("Participer"),
+                    onPressed: () async {
     
                       if (value == -1) {
                         showCupertinoDialog(
@@ -136,39 +141,54 @@ class _ChooseDestState extends State<ChooseDest> {
                         );
                       } else {
     
-                        Map<String, dynamic> data = {
-                          "depart" : widget.data["depart"],
-                          "dest" : dest,
-                          "bus" : {
-                            "webId" : "https://bus1.solidcommunity.net"
+                       print("ebda tserbi");
+
+                       // Demander 
+    
+                        _serviceEnabled = await location.serviceEnabled();
+                        if (!_serviceEnabled!) {
+                          _serviceEnabled = await location.requestService();
+                          if (_serviceEnabled!) {
+                            return;
                           }
-                        };
+                        } 
     
-                        String today = DateFormat.yMd().format(DateTime.now());
-                        String hour = DateFormat("HH:mm:ss").format(DateTime.now());
+                        _permissionGranted = await location.hasPermission();
+                        if (_permissionGranted == PermissionStatus.denied ) {
+                          _permissionGranted = await location.requestPermission();
+                          if (_serviceEnabled == PermissionStatus.granted) {
+                            return;
+                          }
+                        } 
     
-                        Map<String, dynamic> voyage = {
-                          "depart" : (widget.data["depart"] as Node).name.toString(),
-                          "dest" : dest!.name.toString(),
-                          "date" : today,
-                          "hour" : hour
-                        };
+                        _locationData = await location.getLocation();
+                        setState(() {
+                          _isGetLocation = true;
+                        });
+
+                        showCupertinoDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Text("Merci !"),
+                              content: const Text("Vous allez contribuer avec votre localisation jusqu'a votre destination"),
+                              actions: [
     
-                        prefs!.setString("lastTrip", jsonEncode(voyage));
-    
-                        prefs!.setInt('lastDest', dest!.id);
-    
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ResultETA(data: data)),
+                                CupertinoDialogAction(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(color: Theme.of(context).primaryColor),
+                                  ),
+                                  onPressed: (){ 
+                                    Navigator.pop(context);
+                                  }
+                                ),
+                              ],
+                            );
+                          },
                         );
                         
                       }
-    
-                      
-    
-                      
-                      
                     }
                   ),
     

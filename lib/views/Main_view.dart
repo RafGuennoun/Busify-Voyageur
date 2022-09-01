@@ -1,10 +1,15 @@
 import 'package:busify_voyageur/views/Favoris_view.dart';
+import 'package:busify_voyageur/views/Historique.dart';
 import 'package:busify_voyageur/views/Home_view.dart';
+import 'package:busify_voyageur/views/MesArrets.dart';
+import 'package:busify_voyageur/views/ScanPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainView extends StatefulWidget {
-  const MainView({Key? key}) : super(key: key);
+  SharedPreferences prefs;
+  MainView({required this.prefs});
 
   @override
   State<MainView> createState() => _MainViewState();
@@ -14,10 +19,10 @@ class _MainViewState extends State<MainView> {
 
 
 
-  List<Widget> pages = [
-    const HomeView(),
-    const FavorisView(),
-  ];
+  // List<Widget> pages = [
+  //   HomeView(prefs: prefs,),
+  //   const FavorisView(),
+  // ];
 
   int index = 0;
   @override
@@ -29,22 +34,27 @@ class _MainViewState extends State<MainView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Busify"),
+          title: const Text("Busify Voyageur"),
           centerTitle: true,
           elevation: 0,
         ),
     
-        body: Center(child: pages[index],),
+        body: Center(
+          // child: pages[index],
+          child: index == 0 
+          ? HomeView(prefs: widget.prefs)
+          : const FavorisView(),
+        ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           child: const Icon(CupertinoIcons.camera_viewfinder),
           onPressed: () {
             print("Go scan");
-            // Navigator.push(
-            //   context, 
-            //   MaterialPageRoute(builder: (context) => const ScanPage())
-            // );
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const ScanPage())
+            );
 
           }
         ),
@@ -79,13 +89,13 @@ class _MainViewState extends State<MainView> {
               shrinkWrap: true,
               children: [
                 
-                const SizedBox(height: 15,),
+                const SizedBox(height: 25,),
                 
                 // Logo
-                Container(
-                  width: 150,
-                  height: 150,
-                  color: Theme.of(context).primaryColor,
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset("assets/voyageur.png"),
                 ),
 
                 const SizedBox(height: 20,),
@@ -94,7 +104,7 @@ class _MainViewState extends State<MainView> {
                 SizedBox(
                   child: Center(
                     child: Text(
-                      "User",
+                      widget.prefs.getString('user')!,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
@@ -105,25 +115,25 @@ class _MainViewState extends State<MainView> {
                 const Divider(),
 
                 // Jeu
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(
-                        CupertinoIcons.gamecontroller_fill,
-                        color: Theme.of(context).primaryColor,
-                        size: 35,
-                      ),
-                      title: Text(
-                        "Jeu de scan",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      onTap: () {
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 5),
+                //   child: Card(
+                //     child: ListTile(
+                //       leading: Icon(
+                //         CupertinoIcons.gamecontroller_fill,
+                //         color: Theme.of(context).primaryColor,
+                //         size: 35,
+                //       ),
+                //       title: Text(
+                //         "Jeu de scan",
+                //         style: Theme.of(context).textTheme.bodyMedium,
+                //       ),
+                //       onTap: () {
                         
-                      },
-                    ),
-                  ),
-                ),
+                //       },
+                //     ),
+                //   ),
+                // ),
                 
                 // Historique des voyages
                 Padding(
@@ -140,7 +150,10 @@ class _MainViewState extends State<MainView> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       onTap: () {
-                        
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Historique() ),
+                        );
                       },
                     ),
                   ),
@@ -161,7 +174,10 @@ class _MainViewState extends State<MainView> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       onTap: () {
-                        
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MesArrets() ),
+                        );
                       },
                     ),
                   ),
@@ -175,20 +191,26 @@ class _MainViewState extends State<MainView> {
                   child: Card(
                     child: ListTile(
                       leading: Icon(
-                        CupertinoIcons.paintbrush_fill,
+                        CupertinoIcons.moon_fill,
                         color: Theme.of(context).primaryColor,
                         size: 35,
                       ),
-                      title: Text(
-                        "Theme",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => const ThemeSelectorPage())
-                        // );
-                      },
+                      title: 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Mode sombre",
+                            style: Theme.of(context).textTheme.bodyMedium,  
+                          ),
+                          
+                          CupertinoSwitch(
+                            value: false, 
+                            onChanged: (val){}
+                          ),
+                        ],
+                      ) 
+                 
                     ),
                   ),
                 ),

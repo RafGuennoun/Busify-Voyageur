@@ -89,11 +89,22 @@ class _ScanPageState extends State<ScanPage> {
       child: Scaffold(
     
         appBar: AppBar(
-          title: const Text("Scan Page"),
+          title: const Text("Scan"),
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.camera),
+              icon: const Icon(
+                CupertinoIcons.pause_solid  
+              ),
+              onPressed: () async {
+                await controller!.resumeCamera();
+              }, 
+            ),
+
+            IconButton(
+              icon: const Icon(
+                CupertinoIcons.camera_viewfinder
+              ),
               onPressed: () async {
                 await controller!.resumeCamera();
               }, 
@@ -192,7 +203,8 @@ class _ScanPageState extends State<ScanPage> {
 
             loc = LocationModel(
               _locationData!.latitude!.toString(),
-             _locationData!.longitude!.toString()
+              _locationData!.longitude!.toString(),
+              "[]"
             );
 
 
@@ -288,7 +300,7 @@ class _ScanPageState extends State<ScanPage> {
                       onPressed: (){ 
                         Navigator.pushAndRemoveUntil(
                           context, 
-                          MaterialPageRoute(builder: (context) => const MainView()), 
+                          MaterialPageRoute(builder: (context) => MainView(prefs: prefs!)), 
                           (route) => false
                         );
                       }
