@@ -1,4 +1,9 @@
 
+import 'dart:convert';
+
+import 'package:busify_voyageur/controllers/Node_controller.dart';
+import 'package:busify_voyageur/models/Node_model.dart';
+import 'package:busify_voyageur/views/Maps/StopLocation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
@@ -13,28 +18,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+
+  NodeController nodeController = NodeController();
   
-  // String? username = prefs!.getString('username');
-  
-  // Location location = Location();
-
-  bool? _serviceEnabled;
-  // PermissionStatus? _permissionGranted;
-  // LocationData? _locationData;
-  final bool _isListenLocation = false;
-  final bool _isGetLocation = false;
-
-  // SharedPreferences? prefs;
-
-  // Future initPrefs() async {
-  //   prefs = await SharedPreferences.getInstance();
-  // }
-
-  // @override
-  // void initState() {
-  //   initPrefs();
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +73,10 @@ class _HomeViewState extends State<HomeView> {
                               color: Theme.of(context).primaryColor,
                             ),
                             title: Text(
-                              "25 scans",
-                              // widget.prefs.getInt('nbScans') == null ?
-                              // "0 scans" :
-                              // "${widget.prefs.getInt('nbScans')} scans",
+                              // "25 scans",
+                              widget.prefs.getInt('nbScans') == null ?
+                              "0 scans" :
+                              "${widget.prefs.getInt('nbScans')} scans",
                               style: Theme.of(context).textTheme.titleMedium 
                             ),
                             subtitle: Text(
@@ -109,10 +95,10 @@ class _HomeViewState extends State<HomeView> {
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 5),
                                 child: LiquidLinearProgressIndicator(
-                                  // value: widget.prefs.getInt('nbScans') == null 
-                                  // ? 0 
-                                  // : (widget.prefs.getInt('nbScans') as int )/100, 
-                                  value: 0.25, 
+                                  value: widget.prefs.getInt('nbScans') == null 
+                                  ? 0 
+                                  : (widget.prefs.getInt('nbScans') as int )/100, 
+                                  // value: 0.25, 
                                   valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor), 
                                   backgroundColor: Theme.of(context).brightness == Brightness.light 
                                   ? Colors.white
@@ -159,49 +145,64 @@ class _HomeViewState extends State<HomeView> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.calendar,
-                          color: Theme.of(context).primaryColor,
+                      widget.prefs.getString("lastTrip") == null 
+                      ? Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text(
+                          "Vous n'avez pas encore fait de voyage",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
                         ),
-                        title: Text(
-                          "07/08/2022",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
+                      )
+                      : Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              CupertinoIcons.calendar,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            title: Text(
+                              "07/08/2022",
+                              style: Theme.of(context).textTheme.bodyMedium ,
+                            ),
+                          ),
+
+                          ListTile(
+                            leading: Icon(
+                              CupertinoIcons.time,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            title: Text(
+                              "13:46",
+                              style: Theme.of(context).textTheme.bodyMedium ,
+                            ),
+                          ),
+
+                          ListTile(
+                            leading: Icon(
+                              CupertinoIcons.location_solid,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            title: Text(
+                              "Fréres el selami",
+                              style: Theme.of(context).textTheme.bodyMedium ,
+                            ),
+                          ),
+
+                          ListTile(
+                            leading: Icon(
+                              CupertinoIcons.location_fill,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            title: Text(
+                              "Jardin d'essai",
+                              style: Theme.of(context).textTheme.bodyMedium ,
+                            ),
+                          ),
+                        ],
                       ),
 
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.time,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: Text(
-                          "13:46",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
-
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.location_solid,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: Text(
-                          "Fréres el selami",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
-
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.location_fill,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: Text(
-                          "Jardin d'essai",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ),
@@ -224,39 +225,52 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
 
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.shield_fill,
-                          color: Theme.of(context).primaryColor,
+                      // widget.prefs.getString("lastBus") == null ?
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text(
+                          "Vous n'avez pas encore participé dans un bus",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
                         ),
-                        title: Text(
-                          "Coaster",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
+                      )
+                      // : Column(
+                      //   children: [
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.shield_fill,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         jsonDecode(widget.prefs.getString('lastBus')!)["nom"],
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.shield_fill,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: Text(
-                          "Toyota",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.shield_fill,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         jsonDecode(widget.prefs.getString('lastBus')!)["marque"],
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.number,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        title: Text(
-                          "2022",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
-                      ),
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.number,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         jsonDecode(widget.prefs.getString('lastBus')!)["matricule"],
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
@@ -267,6 +281,8 @@ class _HomeViewState extends State<HomeView> {
                 Card(
                   child: Column(
                     children: [
+
+                      
                       
                       ListTile(
                         leading: Icon(
@@ -279,16 +295,46 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
 
-                      ListTile(
-                        leading: Icon(
-                          CupertinoIcons.location_solid,
-                          color: Theme.of(context).primaryColor,
+                      widget.prefs.getString("lastStop") == null 
+                      ? Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text(
+                          "Vous n'avez pas encore scanné un code QR d'un arrêt de bus",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
                         ),
-                        title: Text(
-                          "Fréres el selami",
-                          style: Theme.of(context).textTheme.bodyMedium ,
-                        ),
+                      )
+                      : Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              CupertinoIcons.location_solid,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            title: Text(
+                             jsonDecode(widget.prefs.getString("lastStop")!)['nom'],
+                              style: Theme.of(context).textTheme.bodyMedium ,
+                            ),
 
+                            trailing: IconButton(
+                              icon:Icon(
+                                CupertinoIcons.location_fill,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              onPressed: () async {
+
+                                Node arret = await nodeController.getNodeOSM(jsonDecode(widget.prefs.getString("lastStop")!)['id']);
+
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(builder: (context) => StopLocation(arret: arret))
+                                );
+                              }, 
+                            ),
+
+                          ),
+                        ],
                       ),
 
                     ],

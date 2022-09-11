@@ -15,7 +15,7 @@ class LocalNotificationService {
   Future<void> initalize() async {
     tz.initializeTimeZones();
     const AndroidInitializationSettings androidInitializationSettings = 
-      AndroidInitializationSettings('@drawable/ic_pfe');
+      AndroidInitializationSettings('@drawable/voyageur');
 
     const InitializationSettings settings = InitializationSettings(
       android: androidInitializationSettings

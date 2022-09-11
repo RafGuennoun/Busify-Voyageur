@@ -236,7 +236,7 @@ class _ScanPageState extends State<ScanPage> {
               MaterialPageRoute(builder: (context) => UpdateBusLocation(
                 bus: bus ,
                 loc: loc!,
-                data: pod,
+                pod: pod,
               )),
               (Route<dynamic> route) => false,
             );

@@ -3,9 +3,11 @@ import 'package:busify_voyageur/models/Node_model.dart';
 import 'package:busify_voyageur/views/Maps/StopLocation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MesArrets extends StatefulWidget {
-  const MesArrets({Key? key}) : super(key: key);
+  SharedPreferences prefs;
+  MesArrets({required this.prefs});
 
   @override
   State<MesArrets> createState() => _MesArretsState();
@@ -67,7 +69,16 @@ class _MesArretsState extends State<MesArrets> {
                   height: 10,
                 ),
 
-                ListView.builder(
+                widget.prefs.getStringList("stops") == null 
+                ? Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    "Vous n'avez pas encore scanné un arrêt de bus",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                )
+                : ListView.builder(
                   shrinkWrap: true,
                   itemCount: arrets.length,
                   itemBuilder: (BuildContext ctx, index){

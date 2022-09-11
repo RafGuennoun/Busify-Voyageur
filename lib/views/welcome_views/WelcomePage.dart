@@ -17,25 +17,25 @@ class _WelcomePageState extends State<WelcomePage> {
     {
       "title" : "Page 1",
       "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/me.jpg"
+      "image" : "assets/voyageur.png"
     },
 
     {
       "title" : "Page 2",
       "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/me.jpg"
+      "image" : "assets/voyageur.png"
     },
 
     {
       "title" : "Page 3",
       "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/me.jpg"
+      "image" : "assets/voyageur.png"
     },
 
     {
       "title" : "Page 4",
       "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/me.jpg"
+      "image" : "assets/voyageur.png"
     }
   ]; 
 
@@ -88,28 +88,28 @@ class _WelcomePageState extends State<WelcomePage> {
             PageViewModel(
               title: infos[0]['title'],
               body: infos[0]['body'],
-              // image: buildImage(infos[0]['image']),
+              image: buildImage(infos[0]['image']),
               decoration: getPageDecoration()
             ), 
 
             PageViewModel(
               title: infos[1]['title'],
               body: infos[1]['body'],
-              // image: buildImage(infos[1]['image']),
+              image: buildImage(infos[1]['image']),
               decoration: getPageDecoration()
             ), 
 
             PageViewModel(
               title: infos[2]['title'],
               body: infos[2]['body'],
-              // image: buildImage(infos[2]['image']),
+              image: buildImage(infos[2]['image']),
               decoration: getPageDecoration()
             ), 
 
             PageViewModel(
               title: infos[3]['title'],
               body: infos[3]['body'],
-              // image: buildImage(infos[3]['image']),
+              image: buildImage(infos[3]['image']),
               decoration: getPageDecoration()
             ),
 
@@ -148,7 +148,6 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           dotsDecorator: getDotsDecoration(),
-          // globalBackgroundColor: darkmode ? clr.bleuFonce : clr.blanc,
           globalBackgroundColor: Colors.white,
           showNextButton: false,
         ),

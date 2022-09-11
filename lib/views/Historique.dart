@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Historique extends StatefulWidget {
-  const Historique({Key? key}) : super(key: key);
+  SharedPreferences prefs;
+  Historique({required this.prefs});
 
   @override
   State<Historique> createState() => _HistoriqueState();
@@ -61,7 +63,16 @@ class _HistoriqueState extends State<Historique> {
                     height: 10,
                   ),
       
-                  ListView.builder(
+                  widget.prefs.getStringList("trips") == null 
+                  ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      "Vous n'avez pas encore fait de voyage",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                  : ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: voyages.length,

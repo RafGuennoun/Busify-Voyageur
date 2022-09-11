@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:busify_voyageur/views/Emulator/Emulator.dart';
 import 'package:busify_voyageur/views/Favoris_view.dart';
 import 'package:busify_voyageur/views/Historique.dart';
 import 'package:busify_voyageur/views/Home_view.dart';
@@ -43,6 +44,12 @@ class _MainViewState extends State<MainView> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentTheme();
+  }
+
   int index = 0;
   @override
   Widget build(BuildContext context) {
@@ -62,7 +69,7 @@ class _MainViewState extends State<MainView> {
           // child: pages[index],
           child: index == 0 
           ? HomeView(prefs: widget.prefs)
-          : const FavorisView(),
+          : FavorisView(prefs: widget.prefs,),
         ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -171,7 +178,7 @@ class _MainViewState extends State<MainView> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const Historique() ),
+                          MaterialPageRoute(builder: (context) => Historique(prefs: widget.prefs,) ),
                         );
                       },
                     ),
@@ -195,7 +202,7 @@ class _MainViewState extends State<MainView> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const MesArrets() ),
+                          MaterialPageRoute(builder: (context) => MesArrets(prefs: widget.prefs,) ),
                         );
                       },
                     ),
@@ -282,6 +289,31 @@ class _MainViewState extends State<MainView> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       onTap: () {
+                      },
+                    ),
+                  ),
+                ),
+
+
+                // Testing case
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(
+                        CupertinoIcons.perspective,
+                        color: Theme.of(context).primaryColor,
+                        size: 35,
+                      ),
+                      title: Text(
+                        "Emulateur",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Emulator())
+                        );
                       },
                     ),
                   ),

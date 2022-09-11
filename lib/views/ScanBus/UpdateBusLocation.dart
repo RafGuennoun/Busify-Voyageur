@@ -19,8 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UpdateBusLocation extends StatefulWidget {
   final Bus bus;
   final LocationModel loc;
-  final Map<String, dynamic> data;
-  const UpdateBusLocation({required this.bus, required this.loc, required this.data});
+  final Map<String, dynamic> pod;
+  const UpdateBusLocation({required this.bus, required this.loc, required this.pod});
 
   @override
   State<UpdateBusLocation> createState() => _UpdateBusLocationState();
@@ -282,7 +282,7 @@ class _UpdateBusLocationState extends State<UpdateBusLocation> {
                               List<Node> arrets = snapshot.data as List<Node>; 
                               // arrets.remove(Node.fromJson(widget.data['depart']));
     
-                              Map<String, dynamic> data = {
+                              Map<String, dynamic> dests = {
                                 "destinations" : arrets // ! list of Nodes
                               };
     
@@ -293,7 +293,11 @@ class _UpdateBusLocationState extends State<UpdateBusLocation> {
     
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => Destination(data: data))
+                                    MaterialPageRoute(builder: (context) => Destination(
+                                      bus: widget.bus,
+                                      pod: widget.pod,
+                                      stops: dests,
+                                    ))
                                   );
                                 }
                               );

@@ -64,7 +64,7 @@ class _ResultETAState extends State<ResultETA> {
   MarkerIcon markerDest = const MarkerIcon(
     icon: Icon(
       CupertinoIcons.location_fill,
-      color: Colors.blue,
+      color: Colors.green,
       size: 100,
     ),
   );
@@ -72,7 +72,7 @@ class _ResultETAState extends State<ResultETA> {
   MarkerIcon markerBus = const MarkerIcon(
     icon: Icon(
       CupertinoIcons.bus,
-      color: Colors.blue,
+      color: Colors.red,
       size: 100,
     ),
   );
@@ -233,7 +233,7 @@ class _ResultETAState extends State<ResultETA> {
                               child: SizedBox(
                                 height: 60,
                                 child: Card(
-                                  color: Theme.of(context).primaryColor,
+                                  color: bus ? Colors.red : arr ? Colors.grey : Colors.grey ,
                                   child: ListTile(
                                     title: Text(
                                       "Bus",
@@ -263,6 +263,7 @@ class _ResultETAState extends State<ResultETA> {
                                       if (!bus) {
                                         setState(() {
                                           bus = true;
+                                          arr = false;
                                         });
                                         
                                         await controller!.addMarker(geoBus, markerIcon: markerBus);
@@ -279,7 +280,7 @@ class _ResultETAState extends State<ResultETA> {
                                         roadType: RoadType.car,
                                         roadOption: const RoadOption(
                                             roadWidth: 10,
-                                            roadColor: Colors.blue,
+                                            roadColor: Colors.red,
                                             showMarkerOfPOI: false,
                                             zoomInto: true,
                                         ),
@@ -306,7 +307,7 @@ class _ResultETAState extends State<ResultETA> {
                               child: SizedBox(
                                 height: 60,
                                 child: Card(
-                                  color: Theme.of(context).primaryColor,
+                                  color: arr ? Colors.green : bus ? Colors.grey : Colors.grey,
                                   child: ListTile(
                                     title: Text(
                                       "Voyage",
@@ -336,6 +337,7 @@ class _ResultETAState extends State<ResultETA> {
                                       if (!arr) {
                                         setState(() {
                                           arr = true;
+                                          bus = false;
                                         });
                                       }
 
@@ -351,7 +353,7 @@ class _ResultETAState extends State<ResultETA> {
                                         roadType: RoadType.car,
                                         roadOption: const RoadOption(
                                             roadWidth: 10,
-                                            roadColor: Colors.blue,
+                                            roadColor: Colors.green,
                                             showMarkerOfPOI: false,
                                             zoomInto: true,
                                         ),

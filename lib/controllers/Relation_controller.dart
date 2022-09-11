@@ -94,14 +94,18 @@ class RelationController {
     // response = await dio.get("${osm}7996451.json");
     if (response.statusCode == 200) {
       List<int> nodeIds = [];
+      nodeIds.add(326421421);
       Map<String, dynamic> res = (response.data) as Map<String, dynamic>;
       List members = res["elements"][0]["members"];
       
       for (var element in members) {
-        if (element["type"] == "node") {
+        if (element["type"] == "node" && element["role"] == "platform") {
           nodeIds.add(element["ref"]);
         }
       }
+
+      nodeIds.add(283685711);
+
 
       return nodeIds;
     } else {

@@ -75,10 +75,10 @@ class _CounterPageState extends State<CounterPage> {
                     fontSize: 20,
                     color: Colors.blue
                   ),
-                  duration: const Duration( 
-                    // minutes: widget.min,
-                    minutes: 0,
-                    seconds: 10,
+                  duration: Duration( 
+                    minutes: widget.min,
+                    // minutes: 0,
+                    // seconds: 10,
                   ),
                   onDone: (){
                     setState(() {

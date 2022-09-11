@@ -4,9 +4,11 @@ import 'package:busify_voyageur/views/ScanStop/StartStop.dart';
 import 'package:busify_voyageur/widgets/Loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavorisView extends StatefulWidget {
-  const FavorisView({Key? key}) : super(key: key);
+  SharedPreferences prefs;
+  FavorisView({required this.prefs});
 
   @override
   State<FavorisView> createState() => _FavorisViewState();
@@ -53,7 +55,16 @@ class _FavorisViewState extends State<FavorisView> {
                 
                 const SizedBox(height: 10,),
 
-                loading ? 
+                widget.prefs.getStringList("favs") == null 
+                ? Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    "Vous n'avez pas encore d'arrêt favoris",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                )
+                : loading ? 
                 const SizedBox(
                   width: 100,
                   height: 150,

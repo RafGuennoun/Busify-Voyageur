@@ -42,4 +42,56 @@ class LocationController {
       throw Exception('Failed to set location.');
     }
   }
+
+  Future<bool> addTrack(Map<String, dynamic> infos, Map<String, dynamic> track) async {
+
+    Map<String, dynamic> webId = {
+      "webId" : infos["webId"]
+    };
+
+    LocationModel oldLocation = await getLocation(webId);
+    LocationModel? newLocationModel;
+
+    if (oldLocation.track.isEmpty) {
+      print("is empty");
+      String tracking = "[${track["latitude"]};${track["longitude"]}]";
+
+      newLocationModel = LocationModel(oldLocation.lat, oldLocation.lon, tracking.toString());
+
+    } else {
+      print("is not empty");
+
+      String old = oldLocation.track;
+
+      String tracking = "$old, [${track["latitude"]};${track["longitude"]}]";
+
+      newLocationModel = LocationModel(oldLocation.lat, oldLocation.lon, tracking.toString());
+      
+    }
+
+    Map<String, dynamic> json = {
+      "login" : infos["login"],
+      "webId" : infos["webId"],
+      "location" : {
+        "lat" : newLocationModel.lat,
+        "lon" : newLocationModel.lon,
+        "track" : newLocationModel.track  
+      }
+    };
+
+    Response response;
+      var dio = Dio();
+      response = await dio.post(
+        "${api}location/set", 
+        data: json
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        throw Exception('Failed to set location.');
+      }
+
+    } 
 }

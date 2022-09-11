@@ -47,9 +47,37 @@ class _SplashScreenState extends State<SplashScreen> {
   
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Center(child: Text("Splash")) 
+
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    
+    
+    return SafeArea(
+      child: Scaffold(
+        body: SizedBox(
+          width: width,
+          height: height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              SizedBox(
+                width: width*0.4,
+                height: width*0.4,
+                child: Image.asset("assets/voyageur.png"),
+              ),
+
+              const SizedBox(height: 15,),
+
+              Text(
+                "Busify Voyageur",
+                style: Theme.of(context).textTheme.titleMedium,
+              )
+
+            ],
+          ),
+        ),
       ),
     );
   }
