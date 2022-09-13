@@ -231,14 +231,13 @@ class _ScanPageState extends State<ScanPage> {
             });
 
             // ignore: use_build_context_synchronously
-            Navigator.pushAndRemoveUntil(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => UpdateBusLocation(
                 bus: bus ,
                 loc: loc!,
                 pod: pod,
               )),
-              (Route<dynamic> route) => false,
             );
 
           } else if (data['scan'] == "stop") {
@@ -275,10 +274,9 @@ class _ScanPageState extends State<ScanPage> {
             prefs!.setString("lastStop", depart.toString());
 
             // ignore: use_build_context_synchronously
-            Navigator.pushAndRemoveUntil(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => StartStop(data: stop) ),
-              (Route<dynamic> route) => false,
             );
 
           }

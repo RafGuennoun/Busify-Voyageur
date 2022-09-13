@@ -58,6 +58,8 @@ class _EmulatorState extends State<Emulator> {
     return count/2;
   }
 
+  String data = "";
+
   @override
   Widget build(BuildContext context) {
 
@@ -150,7 +152,7 @@ class _EmulatorState extends State<Emulator> {
 
                     const SizedBox(height: 15,),
     
-                    // ! BS
+                    // ! BUS
                     CupertinoButton(
                       color: Theme.of(context).primaryColor,
                       child: const Text("Scan Bus"),
@@ -242,7 +244,6 @@ class _EmulatorState extends State<Emulator> {
                       }
                     ),
                     
-                 
                   ],
                 ),
     

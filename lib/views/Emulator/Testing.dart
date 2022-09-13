@@ -5,9 +5,11 @@ import 'package:busify_voyageur/controllers/Location_controller.dart';
 import 'package:busify_voyageur/models/Bus_model.dart';
 import 'package:busify_voyageur/models/Location_model.dart';
 import 'package:busify_voyageur/models/Node_model.dart';
-import 'package:busify_voyageur/views/Home_view.dart';
+import 'package:busify_voyageur/services/LocalNotifications.dart';
+import 'package:busify_voyageur/views/Main_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,22 +39,47 @@ class _TestingState extends State<Testing> {
     prefs = await SharedPreferences.getInstance();
   }
 
+  MapController? controller ;
+  
+  late final LocalNotificationService service;
+
   @override
   void initState() {
     initPrefs();
+    controller = MapController(
+      initMapWithUserPosition: false,
+      initPosition: GeoPoint(
+        latitude: 36.7135, 
+        longitude: 6.0473
+      ),
+    );
+    service = LocalNotificationService();
+    service.initalize();
     super.initState();
+    
   }
 
   int value = -1;
 
   Node? dest;
 
+  bool start = false;
+
   LocationController locationController = LocationController();
   BusController busController = BusController();
 
   LocationModel? busLoc;
 
-  participer(LocationData locationData, double destLat, double destLon, List<Map<String, dynamic>> participations ) async {
+  LocationModel keepTrack = LocationModel("0", "0", "");
+
+  participer(
+    LocationData locationData, 
+    double destLat, 
+    double destLon, 
+    List<Map<String, dynamic>> participations,
+    bool start,
+    LocationModel keepTrack 
+    ) async {
 
     double lat = double.parse(locationData.latitude!.toStringAsFixed(4));
     double lon = double.parse(locationData.longitude!.toStringAsFixed(4));
@@ -60,7 +87,7 @@ class _TestingState extends State<Testing> {
     if (lat != destLat && lon != destLon) {
 
       await Future.delayed(
-        const Duration(seconds: 20),
+        const Duration(seconds: 10),
         () async {
       
           LocationData newLoc = await location.getLocation();
@@ -76,20 +103,173 @@ class _TestingState extends State<Testing> {
 
           LocationController locationController = LocationController();
 
+          Map<String, dynamic> webId = 
+          {
+            "webId" : "https://bus1.solidcommunity.net"
+          };
+
+          LocationModel busLoc = await locationController.getLocation(webId);
+          if (busLoc.lat.isEmpty) {
+            Map<String, dynamic> json = {
+              "login" : widget.pod['login'],
+              "webId" : widget.pod['webId'],
+              "location" : {
+                "lat" : newLat.toString(),
+                "lon" : newLon.toString(),
+                "track" : ""
+              }
+            };
+
+            bool initGeo = await locationController.setLocation(json);
+
+            debugPrint("init geo = $initGeo");
+          }
+
+
           bool ajoute = await locationController.addTrack(widget.pod, participation);
           print("ajouté = $ajoute");
 
-          setState(() {
-            participations.add(participation);
-          });
+          if (start == false) {
+            
+            setState(() {
+              keepTrack = LocationModel(newLat.toString(), newLon.toString(),""); 
+              participations.add(participation);
+            });
 
+            participer(newLoc, destLat, destLon, participations, true, keepTrack);
+  
+          } else {
+            GeoPoint oldTrackPoint = GeoPoint(
+              latitude: double.parse(keepTrack.lat), 
+              longitude: double.parse(keepTrack.lon)
+            );
+
+            GeoPoint newTrackPoint = GeoPoint(
+              latitude: newLat, 
+              longitude: newLon
+            );
+
+            GeoPoint destPoint = GeoPoint(
+              latitude: destLat, 
+              longitude: destLon
+            );
+
+            RoadInfo oldRoadInfo = await controller!.drawRoad( 
+              oldTrackPoint, 
+              destPoint,
+              roadType: RoadType.car,
+            ); 
+
+            double oldDistance = oldRoadInfo.distance!;
+
+            RoadInfo newRoadInfo = await controller!.drawRoad( 
+              newTrackPoint, 
+              destPoint,
+              roadType: RoadType.car,
+            );
+            double newDistance = newRoadInfo.distance!;
+
+            debugPrint("${oldDistance-newDistance} km");
+
+            if (oldDistance >= newDistance) {
+              debugPrint("Continuer");
+
+              setState(() {
+                keepTrack = LocationModel(
+                  newLat.toString(), newLon.toString(), "");
+                participations.add(participation);
+              });
           
-          participer(newLoc, destLat, destLon, participations);
+              participer(newLoc, destLat, destLon, participations, true, keepTrack);
+
+            } else {
+
+              debugPrint("Tester la marge d'erreur");
+              int marge = 100;
+
+              if ((newDistance - oldDistance) > marge) {
+       
+                await service.showNotification(
+                  id: 0, 
+                  title: "Participation", 
+                  body: "Votre participation s'est arreté, vous vos etes éloignés du chemin du bus."
+                );
+
+                showCupertinoDialog(
+                  context: context, 
+                  builder:(context) {
+                    return CupertinoAlertDialog(
+                      title: const Text("Participation"),
+                      content: const Text("Votre participation s'est arreté, vous vos etes éloignés du chemin du bus."),
+                      actions: [
+                        CupertinoButton(
+                          child:const Text("D'accord"), 
+                          onPressed: (){
+                            Navigator.pushAndRemoveUntil(
+                              context, 
+                              MaterialPageRoute(builder: (context) => MainView(prefs: prefs!)), 
+                              (route) => false
+                            );
+                          
+                          }
+                        )
+                      ],
+                    );
+                  }
+                );
+              } else {
+
+                debugPrint("Dans la marge d'erreur");
+                setState(() {
+                  keepTrack = LocationModel(
+                  newLat.toString(), newLon.toString(), "");
+                  participations.add(participation);
+                });
+          
+                participer(newLoc, destLat, destLon, participations, true, keepTrack);
+
+              }
+              
+            }
+            
+          }
+
         }
       );
     } else {
 
-      print("c'est egale");
+      debugPrint("Destination");
+
+      await service.showNotification(
+        id: 0, 
+        title: "Merci pour votre participation", 
+        body: "Votre participation s'est arreté, vous etes arrivés a destination."
+      ); 
+
+      showCupertinoDialog(
+        context: context, 
+        builder:(context) {
+          return CupertinoAlertDialog(
+            title: const Text("Participation"),
+            content: const Text("Votre participation s'est arreté, vous etes arrivé a destination"),
+            actions: [
+              CupertinoButton(
+                child:const Text("D'accord"), 
+                onPressed: (){
+                  Navigator.pop(context);
+                }
+              ),
+
+              CupertinoButton(
+                child:const Text("Continuer"), 
+                onPressed: (){
+                  Navigator.pop(context);
+                }
+              ),
+            ],
+          );
+        }
+      );
       
     }
 
@@ -120,7 +300,7 @@ class _TestingState extends State<Testing> {
               onPressed: (){
                 Navigator.pushAndRemoveUntil(
                   context, 
-                  MaterialPageRoute(builder: (context) => HomeView(prefs: prefs!)), 
+                  MaterialPageRoute(builder: (context) => MainView(prefs: prefs!)), 
                   (route) => false
                 );
               }, 
@@ -135,6 +315,16 @@ class _TestingState extends State<Testing> {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
               child: Column(
                 children: [
+
+                  SizedBox(
+                    width: 1,
+                    height: 1,
+                    child: OSMFlutter( 
+                      controller: controller!,
+                      trackMyPosition: false,
+                        initZoom: 16,
+                    ),
+                  ),
 
                   CupertinoButton(
                     color: Theme.of(context).primaryColor,
@@ -198,33 +388,11 @@ class _TestingState extends State<Testing> {
                         int nb = prefs!.getInt("nbScan")!;
                         prefs!.setInt("nbScan", nb+1);
                       }
+
+                      LocationModel t = LocationModel("", "", "");
                     
 
-                      participer(_locationData!, destLat, destLon, participations);
-
-                      // LocationController locationController = LocationController();
-
-                      // bool add = await locationController.addTrack(widget.pod, part);
-                      // print("add = $add");
-                      
-
-                      // print("tracking list : -------------------");
-                      // List<String> trackingList = busLoc!.track.split(',');
-                      // print(trackingList.toString());
-
-                      // for (int i = 0; i < trackingList.length; i++) {
-                      //   print("-------------------------------------------------------");
-                      //   print("index : ${i+1}");
-                      //   print("track : ${trackingList[i]}");
-
-                      //   List<String> temp = trackingList[i].split(';');
-                      //   print("temp = $temp"); 
-                      //   print("temp 0 = ${temp[0].toString().replaceAll('[','')}"); 
-                      //   print("temp 1 = ${temp[1].toString().replaceAll(']','')}"); 
-
-                      //   print("-------------------------------------------------------");
-                        
-                      // }
+                      participer(_locationData!, destLat, destLon, participations, false, t);
 
 
                     }

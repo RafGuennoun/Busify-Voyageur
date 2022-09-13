@@ -63,9 +63,22 @@ class LocationController {
 
       String old = oldLocation.track;
 
-      String tracking = "$old, [${track["latitude"]};${track["longitude"]}]";
+      List temp = old.split(',');
 
-      newLocationModel = LocationModel(oldLocation.lat, oldLocation.lon, tracking.toString());
+      if (temp.length<10) {
+        String tracking = "$old,[${track["latitude"]};${track["longitude"]}]";
+        newLocationModel = LocationModel(oldLocation.lat, oldLocation.lon, tracking.toString());
+        
+      } else {
+        temp.removeAt(0);
+        String newTemp = temp.toString();
+        String oldTrack = newTemp.substring(1, newTemp.length -1);
+
+        String tracking = "$oldTrack,[${track["latitude"]};${track["longitude"]}]";
+
+        newLocationModel = LocationModel(oldLocation.lat, oldLocation.lon, tracking.toString());
+        
+      }
       
     }
 

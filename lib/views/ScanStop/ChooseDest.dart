@@ -209,10 +209,53 @@ class _ChooseDestState extends State<ChooseDest> {
                         print("---------------------------------------------");
 
                         LocationModel loc1 = await locationController.getLocation(bus[0]);
-                        GeoPoint g1 = GeoPoint(
-                          latitude: double.parse(loc1.lat), 
-                          longitude: double.parse(loc1.lon)
-                        );
+                        // GeoPoint g1 = GeoPoint(
+                        //   latitude: double.parse(loc1.lat), 
+                        //   longitude: double.parse(loc1.lon)
+                        // );
+
+                        List tracking = loc1.track.split(',');
+                        print("tracking list");
+                        print(tracking.toString());
+
+                        GeoPoint? nearest;
+
+                        int index = 0;
+
+                        double distance = 1000;
+
+                        for (int i = 0; i < tracking.length; i++) {
+                          List temp = (tracking[i] as String).trim().substring(1, tracking[i].length-1 ).split(';');
+
+                          print("*** i = $i ***");
+
+                          print("temp [0] lat = ${temp[0]}");
+                          print("temp [1] lon = ${temp[1]}");
+
+                          GeoPoint tempGeo = GeoPoint(
+                            latitude: double.parse(temp[0]), 
+                            longitude: double.parse(temp[1])
+                          );
+
+                          RoadInfo tempRoad = await controller!.drawRoad( 
+                            tempGeo, 
+                            gf,
+                            roadType: RoadType.car,
+                          ); 
+
+                          double tempDist = tempRoad.distance!;
+                          print("temp dist = $tempDist");
+
+                          if (tempDist <= distance) {
+                            print("we found one");
+                            setState(() {
+                              distance = tempDist;
+                              index = i;
+                              nearest = tempGeo;
+                            });
+                          }
+                          
+                        }
 
                         LocationModel loc2 = await locationController.getLocation(bus[1]);
                         GeoPoint g2 = GeoPoint(
@@ -228,16 +271,17 @@ class _ChooseDestState extends State<ChooseDest> {
 
                         print("locations done");
 
-                        // dureeBusDepart = Duration(seconds: roadInfo.duration!.round()).inMinutes.round().toString();
-                        // distBusDepart = roadInfo.distance!.toStringAsFixed(1).toString();
-                        //
                         print("goinng to road infos ");
                         RoadInfo roadInfo1 = await controller!.drawRoad( 
-                          g1, 
+                          nearest!, 
                           gd,
                           roadType: RoadType.car,
                         ); 
-                        print("Road infos done ");
+                        
+                        print("***************************************************************************");
+                        print("nearest");
+                        print("[ ${nearest!.latitude} , ${nearest!.longitude} ]");
+                        print("***************************************************************************");
 
 
                         RoadInfo roadInfo2 = await controller!.drawRoad( 
