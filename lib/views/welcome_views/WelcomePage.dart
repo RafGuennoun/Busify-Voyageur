@@ -15,28 +15,17 @@ class _WelcomePageState extends State<WelcomePage> {
 
   List infos = [
     {
-      "title" : "Page 1",
-      "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
+      "title" : "Temps d'arrivée des bus",
+      "body" : "Récuperez les temps d'arrviée estimé des bus dans les arrets.",
       "image" : "assets/voyageur.png"
     },
 
     {
-      "title" : "Page 2",
-      "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
+      "title" : "Participation",
+      "body" : "Contribuez avec vos smartphones pour enrichir l'ecosystéme",
       "image" : "assets/voyageur.png"
     },
 
-    {
-      "title" : "Page 3",
-      "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/voyageur.png"
-    },
-
-    {
-      "title" : "Page 4",
-      "body" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum turpis eget orci aliquet malesuada.",
-      "image" : "assets/voyageur.png"
-    }
   ]; 
 
 
@@ -45,7 +34,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
     Widget buildImage(String path){
       return Center(
-        child: Image.asset(path, width: 350,) ,
+        child: Image.asset(path, width: 250,) ,
       );
     }
 
@@ -73,7 +62,7 @@ class _WelcomePageState extends State<WelcomePage> {
       return DotsDecorator(
         color: Colors.grey,
         size: const Size(10,10),
-        activeColor: Colors.amber,
+        activeColor: Colors.blue,
         activeSize: const Size(25, 10),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24)
@@ -98,22 +87,6 @@ class _WelcomePageState extends State<WelcomePage> {
               image: buildImage(infos[1]['image']),
               decoration: getPageDecoration()
             ), 
-
-            PageViewModel(
-              title: infos[2]['title'],
-              body: infos[2]['body'],
-              image: buildImage(infos[2]['image']),
-              decoration: getPageDecoration()
-            ), 
-
-            PageViewModel(
-              title: infos[3]['title'],
-              body: infos[3]['body'],
-              image: buildImage(infos[3]['image']),
-              decoration: getPageDecoration()
-            ),
-
-            
 
           ],
           done: const Icon(
@@ -142,8 +115,8 @@ class _WelcomePageState extends State<WelcomePage> {
           skip: const Text(
             "Skip",
             style: TextStyle(
-              color: Colors.blueGrey,
-              // fontSize: 18,
+              color: Colors.grey,
+              fontSize: 16,
               // fontWeight: FontWeight.bold
             ),
           ),

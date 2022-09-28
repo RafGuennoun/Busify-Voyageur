@@ -145,8 +145,8 @@ class _HomeViewState extends State<HomeView> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
-                      widget.prefs.getString("lastTrip") == null 
-                      ? Padding(
+                      // widget.prefs.getString("lastTrip") == null ? 
+                      Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: Text(
                           "Vous n'avez pas encore fait de voyage",
@@ -154,53 +154,53 @@ class _HomeViewState extends State<HomeView> {
                           textAlign: TextAlign.center,
                         ),
                       )
-                      : Column(
-                        children: [
-                          ListTile(
-                            leading: Icon(
-                              CupertinoIcons.calendar,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            title: Text(
-                              "07/08/2022",
-                              style: Theme.of(context).textTheme.bodyMedium ,
-                            ),
-                          ),
+                      // : Column(
+                      //   children: [
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.calendar,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         "07/08/2022",
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
-                          ListTile(
-                            leading: Icon(
-                              CupertinoIcons.time,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            title: Text(
-                              "13:46",
-                              style: Theme.of(context).textTheme.bodyMedium ,
-                            ),
-                          ),
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.time,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         "13:46",
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
-                          ListTile(
-                            leading: Icon(
-                              CupertinoIcons.location_solid,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            title: Text(
-                              "Fréres el selami",
-                              style: Theme.of(context).textTheme.bodyMedium ,
-                            ),
-                          ),
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.location_solid,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         "Fréres el selami",
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
 
-                          ListTile(
-                            leading: Icon(
-                              CupertinoIcons.location_fill,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            title: Text(
-                              "Jardin d'essai",
-                              style: Theme.of(context).textTheme.bodyMedium ,
-                            ),
-                          ),
-                        ],
-                      ),
+                      //     ListTile(
+                      //       leading: Icon(
+                      //         CupertinoIcons.location_fill,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //       title: Text(
+                      //         "Jardin d'essai",
+                      //         style: Theme.of(context).textTheme.bodyMedium ,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
 
                       
                     ],

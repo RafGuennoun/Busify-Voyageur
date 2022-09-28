@@ -7,6 +7,7 @@ import 'package:busify_voyageur/models/Location_model.dart';
 import 'package:busify_voyageur/models/Node_model.dart';
 import 'package:busify_voyageur/services/LocalNotifications.dart';
 import 'package:busify_voyageur/views/Main_view.dart';
+import 'package:busify_voyageur/widgets/Loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -72,6 +73,8 @@ class _TestingState extends State<Testing> {
 
   LocationModel keepTrack = LocationModel("0", "0", "");
 
+  bool loading = false;
+
   participer(
     LocationData locationData, 
     double destLat, 
@@ -81,10 +84,51 @@ class _TestingState extends State<Testing> {
     LocationModel keepTrack 
     ) async {
 
+      setState(() {
+        loading = true;
+      });
+
     double lat = double.parse(locationData.latitude!.toStringAsFixed(4));
     double lon = double.parse(locationData.longitude!.toStringAsFixed(4));
 
-    if (lat != destLat && lon != destLon) {
+    if ((lat == 36.7854 && lon == 3.0634 )) {
+       setState(() {
+        loading = false;
+      });
+
+      await service.showNotification(
+        id: 0, 
+        title: "Merci pour votre participation", 
+        body: "Votre participation s'est arreté, vous etes arrivés a destination."
+      ); 
+
+      showCupertinoDialog(
+        context: context, 
+        builder:(context) {
+          return CupertinoAlertDialog(
+            title: const Text("Participation"),
+            content: const Text("Votre participation s'est arreté, vous etes arrivé a destination"),
+            actions: [
+              CupertinoButton(
+                child:const Text("D'accord"), 
+                onPressed: (){
+                  Navigator.pop(context);
+                }
+              ),
+
+              CupertinoButton(
+                child:const Text("Continuer"), 
+                onPressed: (){
+                  Navigator.pop(context);
+                }
+              ),
+            ],
+          );
+        }
+      );
+    }
+
+    else if (lat != destLat && lon != destLon ) {
 
       await Future.delayed(
         const Duration(seconds: 10),
@@ -178,6 +222,7 @@ class _TestingState extends State<Testing> {
                 keepTrack = LocationModel(
                   newLat.toString(), newLon.toString(), "");
                 participations.add(participation);
+
               });
           
               participer(newLoc, destLat, destLon, participations, true, keepTrack);
@@ -185,9 +230,15 @@ class _TestingState extends State<Testing> {
             } else {
 
               debugPrint("Tester la marge d'erreur");
-              int marge = 100;
+              int marge = 20;
 
-              if ((newDistance - oldDistance) > marge) {
+              if ((newDistance*1000 - oldDistance*1000) > marge) {
+
+                 setState(() {
+                  loading = false;
+                });
+
+
        
                 await service.showNotification(
                   id: 0, 
@@ -239,6 +290,10 @@ class _TestingState extends State<Testing> {
     } else {
 
       debugPrint("Destination");
+
+      setState(() {
+        loading = false;
+      });
 
       await service.showNotification(
         id: 0, 
@@ -326,7 +381,9 @@ class _TestingState extends State<Testing> {
                     ),
                   ),
 
-                  CupertinoButton(
+                  loading ? 
+                  const Loading()
+                  : CupertinoButton(
                     color: Theme.of(context).primaryColor,
                     child: const Text("Participer"), 
                     onPressed: () async {
