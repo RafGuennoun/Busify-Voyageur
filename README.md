@@ -1,16 +1,11 @@
-# busify_voyageur
+# Busify Voyageur
+Une application cross-platform (Android et IOS) utilisée par les voyageurs pour calculer les temps d'arrivée des bus.
 
-A new Flutter project.
+## Projet de fin d'études Master 
+Dans le cadre du projet de fin d'études du **Master Ingénierie du Logicil** à l'Université des Sciences et de la Technologie Houari Boumediene (USTHB).
 
-## Getting Started
+### Titre du projet : 
+Un écosystème décentralisé pour l’assistance des voyageurs dans les transports en commun.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Sujet proposé : 
+Mr BOUBENIA Mohamed.
